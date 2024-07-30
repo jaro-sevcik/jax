@@ -91,6 +91,12 @@ _MOCK_NUM_PROCESSES = config.int_flag(
          "off mocking.",
 )
 
+_MOCK_NUM_HOSTS_PER_SLICE = config.int_flag(
+    name="mock_num_hosts_per_slice",
+    default=1,
+    help="Mock number of JAX processes per node.",
+)
+
 _CPU_ENABLE_GLOO_COLLECTIVES = config.bool_flag(
     name="jax_cpu_enable_gloo_collectives",
     default=False,
@@ -460,6 +466,7 @@ def make_gpu_client(
       platform_name=platform_name,
       allowed_devices=allowed_devices,
       mock=use_mock_gpu_client,
+      mock_num_hosts_per_slice=_MOCK_NUM_HOSTS_PER_SLICE.value,
   )
 
 
@@ -637,6 +644,7 @@ def _options_from_jax_configs(plugin_name):
     options['enable_mock_nccl'] = mock_processes > 0
     if options['enable_mock_nccl']:
       options['num_nodes'] = mock_processes
+    options['mock_num_hosts_per_slice'] = _MOCK_NUM_HOSTS_PER_SLICE.value
 
   return options
 
